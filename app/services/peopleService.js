@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const cloudinary = require('../config/cloudinary');
 const people = require('../models/people')
 
 const writePeople = () => {
@@ -83,4 +83,15 @@ const deletePeople = (req, res) => {
     })
 }
 
-module.exports = { writePeople, getPeople, getPeopleById, createPeople, updatePeople, deletePeople }
+const uploadImagePeople = async (req, res) => {
+    const reqFile = req.file;
+
+    try {
+        const result = await cloudinary.uploader.upload(reqFile.path, { folder: 'people', max_file_size: 2097152 });
+        res.json({ url: result.secure_url });
+    } catch (err) {
+        console.log('Error uploading image');
+    }
+}
+
+module.exports = { writePeople, getPeople, getPeopleById, createPeople, updatePeople, deletePeople, uploadImagePeople }
